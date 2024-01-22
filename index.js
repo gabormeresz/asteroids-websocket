@@ -1,3 +1,5 @@
+import express from "express";
+import { createServer } from "http";
 import { ethers } from "ethers";
 import {
   contractAddress,
@@ -7,6 +9,18 @@ import {
   KEEP_ALIVE_CHECK_INTERVAL
 } from "./constants.js";
 import "dotenv/config";
+
+const app = express();
+const server = createServer(app);
+
+app.get("/", (req, res) => {
+  res.send("WebSocket client is running");
+});
+
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+  console.log(`Server is listening on port ${PORT}`);
+});
 
 function startConnection() {
   const provider = new ethers.providers.WebSocketProvider(
