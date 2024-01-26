@@ -17,7 +17,7 @@ app.get("/", (req, res) => {
   res.send("WebSocket client is running");
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8090;
 server.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`);
 });
@@ -30,22 +30,26 @@ function startConnection() {
   const contract = new ethers.Contract(contractAddress, contractABI, provider);
 
   contract.on("Transfer", async (from, to, tokenId, event) => {
-    if (from === nullAddress) {
-      console.log(`New Token Minted: ${tokenId.toString()}`);
+    console.log(
+      `${from === nullAddress ? "New MINT" : `Transfer from: ${from}`}`
+    );
+    console.log("Transfer to: ", to);
+    console.log("tokenId: ", tokenId.toString());
 
-      const response = await fetch(
-        `https://asteroids-nft.vercel.app/api/tokenminted?tokenId=${tokenId.toString()}`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${process.env.API_BEARER_TOKEN}`
-          }
-        }
-      );
+    const response = await fetch(`${process.env.BACKEND_APP_URL}/nft`, {
+      method: `${from === nullAddress ? "POST" : "PATCH"}`,
+      headers: {
+        Authorization: `Bearer ${process.env.API_BEARER_TOKEN}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        tokenOwner: to,
+        tokenId: parseInt(tokenId.toString())
+      })
+    });
 
-      if (!response.ok) {
-        console.error("Error calling Next.js API:", response.statusText);
-      }
+    if (!response.ok) {
+      console.error("Error calling Backend:", response.statusText);
     }
   });
 
