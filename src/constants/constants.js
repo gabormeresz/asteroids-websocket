@@ -1,5 +1,5 @@
 export const EXPECTED_PONG_BACK = 15000;
-export const KEEP_ALIVE_CHECK_INTERVAL = 7500;
+export const KEEP_ALIVE_CHECK_INTERVAL = 30000;
 export const nullAddress = "0x0000000000000000000000000000000000000000";
 export const contractAddress = "0xF9D60aEe12944860A7855Ba34737605422658c70";
 export const contractABI = [
